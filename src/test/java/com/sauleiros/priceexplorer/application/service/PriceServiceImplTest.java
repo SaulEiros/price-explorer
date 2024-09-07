@@ -260,7 +260,7 @@ public class PriceServiceImplTest {
                 Optional.of(2L)
         );
 
-        when(priceRepository.findPrices(any())).thenReturn(prices);
+        when(priceRepository.findPrices(any())).thenReturn(List.of());
 
         // WHEN
         List<Price> result = priceService.findPrices(filter);
