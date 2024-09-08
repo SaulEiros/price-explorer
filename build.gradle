@@ -41,3 +41,8 @@ tasks.named('test') {
         showStackTraces = true
     }
 }
+
+// Avoid the creation of priceexplorer-<version>-plain.jar
+tasks.named("jar", Jar.class).configure(jar -> {
+    jar.setEnabled(false);
+})
