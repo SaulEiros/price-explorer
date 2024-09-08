@@ -3,6 +3,7 @@
 <!-- PROJECT SHIELDS -->
 [![Issues][issues-shield]][issues-url]
 [![MIT License][license-shield]][license-url]
+[![Live Demo][livedemo-shiel]][livedemo-url]
 [![LinkedIn][linkedin-shield]][linkedin-url]
 
 
@@ -33,8 +34,10 @@
         <li><a href="#run-the-application">Run The Application</a></li>
         <li><a href="#use-the-application">Use The Application</a></li>
         <li><a href="#docker-image">Docker Image</a></li>
+        <li><a href="#live-demo">Live Demo</a></li>
       </ul>
     </li>
+    <li><a href="#further-work">Further Work</a></li>
     <li><a href="#contribution">Contribution</a></li>
   </ol>
 </details>
@@ -92,6 +95,7 @@ These are the different tags available:
 * [input-adapters-impl](https://github.com/SaulEiros/price-explorer/tree/input-adapters-impl): Added Swagger
   dependencies and Rest Controllers implementation.
 * [dockerized-app](https://github.com/SaulEiros/price-explorer/tree/dockerized-app): Added Docker and Docker Compose files. Added Live Demo and Enhanced README.md.
+* [docker-image-publish](https://github.com/SaulEiros/price-explorer/tree/docker-image-publish): Added github actions workflow for build and publish imagen in Dockerhub registry.
   
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -136,7 +140,7 @@ The main code is separated into the following folder hierarchy:
 
 ```bash
 main
-├── AlbumExplorerApplication.kt
+├── PriceexplorerApplication.kt
 ├── application
     ...
 ├── domain
@@ -540,6 +544,66 @@ By querying the api directly, as in this example:
 http://localhost:8080/prices
 ```
 
+Aditionaly, a Github Actions Workflow was created for build and publish the image every time a new change is pushed into main ([see workflow](https://github.com/SaulEiros/album-explorer/blob/main/.github/workflows/docker-publish.yml)).
+
+You do not need to download the project for executing it in your local. In order to use the published image, just create a `docker-compose.yml` file like this:
+
+```yaml
+services:
+  backend:
+    container_name: price-explorer-backend
+    image: mreiros/price-explorer-backend:latest
+    volumes:
+      - ./src:/app/src
+    ports:
+      - 8080:8080
+```
+
+Once you have the file created, just run the following command:
+
+```bash
+docker-compose up -d
+```
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+### LIVE DEMO
+<a id="live-demo"></a>
+
+A live demo is also available without downloading the code. You can consult the swagger panel at the following link:
+
+```
+http://price-explorer.sauleiros.com/swagger-ui/index.html
+```
+
+Or make requests directly to the api as in this example:
+
+```
+http://price-explorer.sauleiros.com/prices
+```
+
+**Note that HTTPS requests are not available. Enabling SSL connections in Swagger is a work in progress.**
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+## FURTHER WORK
+<a id="further-work"></a>
+
+#### Activate SSL on Swagger Connections: 
+
+There is currently a problem accessing the Swagger panel in the Live Demo. If accessed via https, it will not be possible to test operations.
+
+#### Integrating a CI/CD flow in github:
+
+It would be great to be able to integrate the changes automatically into the Demo server. For this, a CI/CD plan could be created using the pipelines offered by github.
+
+#### Improving exception handling at the REST layer:
+
+Currently, the exception handling done at the REST layer is limited and could be improved by providing for a larger volume of exceptions.
+
+#### Adding a complete CRUD repository:
+
+Currently, search for prices is the only available operation. It would be interesting to create operations for create, update and delete prices.
+
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 ## Contribution
@@ -565,6 +629,10 @@ a comment by opening an Issue in the repository or contacting me through my Link
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
 
 [linkedin-url]: https://www.linkedin.com/in/saul-eiros/
+
+[livedemo-shiel]: https://img.shields.io/badge/Live_Demo-000000?style=for-the-badge&color=red
+
+[livedemo-url]: http://price-explorer.sauleiros.com/swagger-ui/index.html
 
 [springboot]: https://img.shields.io/badge/spring_boot-000000?style=for-the-badge&logo=springboot&logoColor=white&color=%236DB33F
 
