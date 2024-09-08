@@ -108,6 +108,8 @@ This section explores how different aspects of development were addressed for th
 All the developments were done in a **feature branch** and merged to **main** once the branch scope was complete. Once
 the changes reach main, a new **tag** is created so that they can be easily located.
 
+Also, Conventional Commits specification ([see more](https://www.conventionalcommits.org/en/v1.0.0/)) was followed.
+
 Perhaps in a real scenario, merging the changes by squashing commits would have been appropriate, but in this case I
 have chosen to merge all commits so that the entire development process could be seen.
 
