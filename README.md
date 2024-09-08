@@ -32,6 +32,7 @@
         <li><a href="#prerequisites">Prerequisites</a></li>
         <li><a href="#run-the-application">Run The Application</a></li>
         <li><a href="#use-the-application">Use The Application</a></li>
+        <li><a href="#docker-image">Docker Image</a></li>
       </ul>
     </li>
     <li><a href="#contribution">Contribution</a></li>
@@ -90,7 +91,8 @@ These are the different tags available:
   implementation the Sql Price Repository.
 * [input-adapters-impl](https://github.com/SaulEiros/price-explorer/tree/input-adapters-impl): Added Swagger
   dependencies and Rest Controllers implementation.
-
+* [dockerized-app](https://github.com/SaulEiros/price-explorer/tree/dockerized-app): Added Docker and Docker Compose files. Added Live Demo and Enhanced README.md.
+  
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 ## Project Implementation
@@ -284,7 +286,7 @@ gradle test
 
 To use the application you can access the Swagger UI. To do so, you can open a browser and go to this url:
 
-```http request
+```
 http://localhost:8080/swagger-ui/index.html
 ```
 
@@ -294,7 +296,7 @@ You can also perform request to the API invoking directly the developed endpoint
 
 This will return the whole collection of prices.
 
-```http request
+```
 http://localhost:8080/prices
 ```
 
@@ -349,7 +351,7 @@ http://localhost:8080/prices
 The date must follow the **ISO 8601** Standard for Date and Time. Check
 it [here](https://www.iso.org/iso-8601-date-and-time-format.html).
 
-```http request
+```
 http://localhost:8080/prices?date=2020-06-14T15:30:00
 ```
 
@@ -378,7 +380,7 @@ If the given date does not match any result, an empty list will be returned.
 
 The Brand Id should be a Long.
 
-```http request
+```
 http://localhost:8080/prices?brandId=1
 ```
 
@@ -432,7 +434,7 @@ If the given Brand Id does not match any result, an empty list will be returned.
 
 #### Filter by Product Id
 
-```http request
+```
 http://localhost:8080/prices?productId=35455
 ```
 
@@ -489,7 +491,7 @@ If the given Product Id does not match any result, and empty list will be return
 You can use all the params at the same time. Remember that when filtering by date, if two or more results match, the one
 with higher priority will be returned.
 
-```http request
+```
 http://localhost:8080/prices?date=2020-06-15T07:30:00&brandId=1&productId=35455
 ```
 
@@ -513,6 +515,30 @@ http://localhost:8080/prices?date=2020-06-15T07:30:00&brandId=1&productId=35455
 </details>
 
 If any of the parameter do not match any result, an empty list will be returned.
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+### Docker Image
+<a id="docker-image"></a>
+
+To facilitate the deployment of the application, if you have Docker on your system you can run the application with the following command:
+```bash
+docker-compose up -d
+```
+
+Once the container is up and running, you can access it as normal:
+
+On the swagger front end:
+
+```
+http://localhost:8080/swagger-ui/index.html
+```
+
+By querying the api directly, as in this example:
+
+```
+http://localhost:8080/prices
+```
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
