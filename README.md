@@ -321,6 +321,57 @@ http://localhost:8080/prices?date=2020-06-16T21:00:00&brandId=1&productId=35455
 ```
 </details>
 
+* **404 ERROR CODE: 16th of June at 21:00 for brand 2 and product 35455:**
+
+```
+http://localhost:8080/prices?date=2020-06-16T21:00:00&brandId=2&productId=35455
+```
+
+<details>
+  <summary>Response</summary>
+
+```json
+{
+  "status": 404,
+  "message": "Price not found for product 35455, brand 2 on date 2020-06-16T21:00"
+}
+```
+</details>
+
+* **400 BAD REQUEST (Missing Parameter): 16th of June at 21:00 for brand 1:**
+
+```
+http://localhost:8080/prices?date=2020-06-16T21:00:00&brandId=1
+```
+
+<details>
+  <summary>Response</summary>
+
+```json
+{
+  "status": 400,
+  "message": "The productId parameter is missing"
+}
+```
+</details>
+
+* **400 BAD REQUEST (Invalid Parameter): 16th of June at 21:00 for brand 1 and product 1Z:**
+
+```
+http://localhost:8080/prices?date=2020-06-16T21:00:00&brandId=1&productId=1Z
+```
+
+<details>
+  <summary>Response</summary>
+
+```json
+{
+  "status": 400,
+  "message": "The productId parameter is not of the correct type: Long"
+}
+```
+</details>
+
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 ### Project Configuration
