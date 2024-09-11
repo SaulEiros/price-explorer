@@ -1,7 +1,6 @@
 package com.sauleiros.priceexplorer.infrastructure.adapters.input.rest;
 
 import com.sauleiros.priceexplorer.application.ports.input.PriceService;
-import com.sauleiros.priceexplorer.application.ports.input.filter.PriceFilter;
 import com.sauleiros.priceexplorer.infrastructure.adapters.input.rest.models.RestPrice;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -16,8 +15,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
 
 @RestController
 @Tag(name = "Prices")
@@ -31,31 +28,27 @@ public class PriceController {
         this.priceService = priceService;
     }
 
-    @Operation(summary = "Get a list of Prices. " +
-            "If filtered by date, Priorty Prices will be returned on overlaped results.")
+    @Operation(summary = "Get a Prices. This price must match the provided date, brandId and productId" +
+            "In case that more than one Price matches the parameters, the one with higher priority will be returned.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "A List of Prices",
+            @ApiResponse(responseCode = "200", description = "The matching Price.",
                     content = {@Content(mediaType = "application/json",
                             schema = @Schema(implementation = RestPrice.class))}),
             @ApiResponse(responseCode = "400", description = "Invalid parameter provided.",
                     content = @Content),
+            @ApiResponse(responseCode = "404", description = "Price not found.",
+                    content = @Content),
     }
     )
     @GetMapping
-    public List<RestPrice> findPrices(
+    public RestPrice findPrices(
             @Parameter(description = "The date on which the price is elegible.")
-            @RequestParam("date") Optional<LocalDateTime> dateTime,
+            @RequestParam("date") LocalDateTime date,
             @Parameter(description = "The Brand Id of the desired Prices.")
-            @RequestParam("brandId") Optional<Long> brandId,
+            @RequestParam("brandId") Long brandId,
             @Parameter(description = "The Product Id of the desired Prices.")
-            @RequestParam("productId") Optional<Long> productId
+            @RequestParam("productId") Long productId
     ) {
-        PriceFilter priceFilter = new PriceFilter(
-                dateTime,
-                productId,
-                brandId
-        );
-
-        return this.priceService.findPrices(priceFilter).stream().map(RestPrice::fromDomain).toList();
+        return RestPrice.fromDomain(this.priceService.findPrice(date, brandId, productId));
     }
 }

@@ -10,12 +10,12 @@ import java.util.List;
 
 public interface JpaPriceRepository extends JpaRepository<SqlPrice, Long> {
     @Query("SELECT p FROM SqlPrice p WHERE " +
-            "(:date IS NULL OR :date BETWEEN p.startDate AND p.endDate) " +
-            "AND (:productId IS NULL OR p.productId = :productId) " +
-            "AND (:brandId IS NULL OR p.brandId = :brandId) ")
+            ":date BETWEEN p.startDate AND p.endDate " +
+            "AND p.brandId = :brandId " +
+            "AND p.productId = :productId")
     List<SqlPrice> findPrices(
             @Param("date") LocalDateTime date,
-            @Param("productId") Long productId,
-            @Param("brandId") Long brandId
+            @Param("brandId") Long brandId,
+            @Param("productId") Long productId
     );
 }

@@ -1,16 +1,14 @@
 package com.sauleiros.priceexplorer.application.service;
 
 import com.sauleiros.priceexplorer.application.ports.input.PriceService;
-import com.sauleiros.priceexplorer.application.ports.input.filter.PriceFilter;
 import com.sauleiros.priceexplorer.application.ports.output.PriceRepository;
-import com.sauleiros.priceexplorer.application.ports.output.query.PriceQuery;
+import com.sauleiros.priceexplorer.domain.exception.PriceNotFoundException;
 import com.sauleiros.priceexplorer.domain.model.Price;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class PriceServiceImpl implements PriceService {
@@ -22,37 +20,17 @@ public class PriceServiceImpl implements PriceService {
     }
 
     @Override
-    public List<Price> findPrices(PriceFilter filter) {
-        PriceQuery query = buildQuery(filter);
-        List<Price> prices = priceRepository.findPrices(query);
+    public Price findPrice(LocalDateTime date, Long brandId, Long productId) {
+        List<Price> prices = priceRepository.findPrices(date, brandId, productId);
 
-        return filter.date().isPresent() ? filterPricesByPriority(prices) : prices;
+        return filterPricesByPriority(prices, date, brandId, productId);
     }
 
-    private PriceQuery buildQuery(PriceFilter filter) {
-        return new PriceQuery(
-             filter.date(),
-             filter.productId(),
-             filter.brandId()
-        );
-    }
-
-    private List<Price> filterPricesByPriority(List<Price> prices) {
+    private Price filterPricesByPriority(List<Price> prices, LocalDateTime date, Long brandId, Long productId) {
         return prices.stream()
-                .collect(Collectors.groupingBy(
-                        price -> new ProductBrandKey(price.productId(), price.brandId()),
-                        Collectors.maxBy(Comparator.comparingLong(Price::priority))
-                ))
-                .values()
-                .stream()
-                .flatMap(Optional::stream)
-                .toList();
+                .max(Comparator.comparingLong(Price::priority))
+                .orElseThrow(() -> new PriceNotFoundException(date, brandId, productId));
     }
-
-    private record ProductBrandKey(
-            Long productId,
-            Long brandId
-    ){}
 }
 
 
