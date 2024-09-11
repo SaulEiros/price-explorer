@@ -1,10 +1,9 @@
 package com.sauleiros.priceexplorer.application.ports.input;
 
-import com.sauleiros.priceexplorer.application.ports.input.filter.PriceFilter;
 import com.sauleiros.priceexplorer.domain.model.Price;
 
-import java.util.List;
+import java.time.LocalDateTime;
 
 public interface PriceService {
-    List<Price> findPrices(PriceFilter filter);
+    Price findPrice(LocalDateTime date, Long brandId, Long productId);
 }

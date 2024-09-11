@@ -1,11 +1,11 @@
 package com.sauleiros.priceexplorer.infrastructure.adapters.output.sql;
 
 import com.sauleiros.priceexplorer.application.ports.output.PriceRepository;
-import com.sauleiros.priceexplorer.application.ports.output.query.PriceQuery;
 import com.sauleiros.priceexplorer.domain.model.Price;
 import com.sauleiros.priceexplorer.infrastructure.adapters.output.sql.model.SqlPrice;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
@@ -18,11 +18,11 @@ public class SqlPriceRepository implements PriceRepository {
     }
 
     @Override
-    public List<Price> findPrices(PriceQuery query) {
+    public List<Price> findPrices(LocalDateTime date, Long brandId, Long productId) {
         return this.jpaPriceRepository.findPrices(
-                query.date().orElse(null),
-                query.productId().orElse(null),
-                query.brandId().orElse(null)
+                date,
+                brandId,
+                productId
         ).stream().map(SqlPrice::toDomain).toList();
     }
 }
