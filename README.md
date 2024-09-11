@@ -51,9 +51,9 @@
 This project is a technical demonstration of how to build a simple project using Java 21 and Spring Boot. This project
 also wants to reflect clean code and clean architecture techniques and best practices.
 
-The purpose of the application is to list the assigned prices in a database table. You can filter the results using
-parameters such as price application date, brand or product ID. If you are filtering by date and two or more prices
-match for the same date prices match for the same application date, the one with the highest priority will be returned.
+The purpose of the application is to list the assigned prices in a database table. The query is filtering the results using
+the price application date, brand or product ID; all of them mandatory. If two or more prices matches for the same application 
+date, the one with the highest priority will be returned.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -96,6 +96,8 @@ These are the different tags available:
   dependencies and Rest Controllers implementation.
 * [dockerized-app](https://github.com/SaulEiros/price-explorer/tree/dockerized-app): Added Docker and Docker Compose files. Added Live Demo and Enhanced README.md.
 * [docker-image-publish](https://github.com/SaulEiros/price-explorer/tree/docker-image-publish): Added github actions workflow for build and publish imagen in Dockerhub registry.
+* [refactor-business-logic](https://github.com/SaulEiros/price-explorer/tree/refactor-business-logic): A less complex approach was requested. This ended up with slight modifications to the application.
+* [e2e-testing](https://github.com/SaulEiros/price-explorer/tree/e2e-testing): To validate the entire application, a collection of e2e tests was implemented.
   
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -163,6 +165,8 @@ main
 
 <a id="testing"></a>
 
+#### Unit Testing
+
 Unit tests for the application layer were developed using **Junit 5** and **Mockito**. Also,
 TTD ([see more](https://en.wikipedia.org/wiki/Test-driven_development)) was followed, creating first the test suit and
 implementing the services later.
@@ -206,6 +210,120 @@ void givenNoFilters_whenGetAllPrices_thenReturnAllPrices() {
     assertEquals(prices, result);
 }
 ```
+
+#### E2E Testing
+
+Additionally, a collection of E2E tests was implemented for validating the whole implementation. The test collection validates the following cases:
+
+* **14th of June at 10:00 for brand 1 and product 35455:**
+
+```
+http://localhost:8080/prices?date=2020-06-14T10:00:00&brandId=1&productId=35455
+```
+
+<details>
+  <summary>Response</summary>
+
+```json
+{
+  "productId": 35455,
+  "brandId": 1,
+  "priceList": 1,
+  "price": 35.5,
+  "currency": "EUR",
+  "startDate": "2020-06-14T00:00:00",
+  "endDate": "2020-12-31T23:59:59"
+}
+```
+</details>
+
+* **14th of June at 16:00 for brand 1 and product 35455:**
+
+```
+http://localhost:8080/prices?date=2020-06-14T16:00:00&brandId=1&productId=35455
+```
+
+<details>
+  <summary>Response</summary>
+
+```json
+{
+  "productId": 35455,
+  "brandId": 1,
+  "priceList": 2,
+  "price": 25.45,
+  "currency": "EUR",
+  "startDate": "2020-06-14T15:00:00",
+  "endDate": "2020-06-14T18:30:00"
+}
+```
+</details>
+
+* **14th of June at 21:00 for brand 1 and product 35455:**
+
+```
+http://localhost:8080/prices?date=2020-06-14T21:00:00&brandId=1&productId=35455
+```
+
+<details>
+  <summary>Response</summary>
+
+```json
+{
+  "productId": 35455,
+  "brandId": 1,
+  "priceList": 1,
+  "price": 35.5,
+  "currency": "EUR",
+  "startDate": "2020-06-14T00:00:00",
+  "endDate": "2020-12-31T23:59:59"
+}
+```
+</details>
+
+* **15th of June at 10:00 for brand 1 and product 35455:**
+
+```
+http://localhost:8080/prices?date=2020-06-15T10:00:00&brandId=1&productId=35455
+```
+
+<details>
+  <summary>Response</summary>
+
+```json
+{
+  "productId": 35455,
+  "brandId": 1,
+  "priceList": 3,
+  "price": 30.5,
+  "currency": "EUR",
+  "startDate": "2020-06-15T00:00:00",
+  "endDate": "2020-06-15T11:00:00"
+}
+```
+</details>
+
+* **16th of June at 21:00 for brand 1 and product 35455:**
+
+```
+http://localhost:8080/prices?date=2020-06-16T21:00:00&brandId=1&productId=35455
+```
+
+<details>
+  <summary>Response</summary>
+
+```json
+{
+  "productId": 35455,
+  "brandId": 1,
+  "priceList": 4,
+  "price": 38.95,
+  "currency": "EUR",
+  "startDate": "2020-06-15T16:00:00",
+  "endDate": "2020-12-31T23:59:59"
+}
+```
+</details>
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -294,231 +412,34 @@ To use the application you can access the Swagger UI. To do so, you can open a b
 http://localhost:8080/swagger-ui/index.html
 ```
 
-You can also perform request to the API invoking directly the developed endpoint as in the following examples:
-
-#### Get All Prices.
-
-This will return the whole collection of prices.
+You can also perform requests to the API invoking directly the developed endpoint like in the following example:
 
 ```
-http://localhost:8080/prices
+http://price-explorer.sauleiros.com/prices?date=2020-06-16T21:00:00&brandId=1&productId=35455
 ```
 
 <details>
   <summary>Response</summary>
 
 ```json
-[
-  {
-    "productId": 35455,
-    "brandId": 1,
-    "priceList": 1,
-    "price": 35.5,
-    "currency": "EUR",
-    "startDate": "2020-06-14T00:00:00",
-    "endDate": "2020-12-31T23:59:59"
-  },
-  {
-    "productId": 35455,
-    "brandId": 1,
-    "priceList": 2,
-    "price": 25.45,
-    "currency": "EUR",
-    "startDate": "2020-06-14T15:00:00",
-    "endDate": "2020-06-14T18:30:00"
-  },
-  {
-    "productId": 35455,
-    "brandId": 1,
-    "priceList": 3,
-    "price": 30.5,
-    "currency": "EUR",
-    "startDate": "2020-06-15T00:00:00",
-    "endDate": "2020-06-15T11:00:00"
-  },
-  {
-    "productId": 35455,
-    "brandId": 1,
-    "priceList": 4,
-    "price": 38.95,
-    "currency": "EUR",
-    "startDate": "2020-06-15T16:00:00",
-    "endDate": "2020-12-31T23:59:59"
-  }
-]
+{
+  "productId": 35455,
+  "brandId": 1,
+  "priceList": 4,
+  "price": 38.95,
+  "currency": "EUR",
+  "startDate": "2020-06-15T16:00:00",
+  "endDate": "2020-12-31T23:59:59"
+}
 ```
 
+Remember that all the parameters are mandatory.
+
+Also, the Application can return other responses:
+* **400**: If there is any missing parameter or any parameter does not match the required type.
+* **404**: If there is no prices that matches the requested parameters.
+* **500**: If there is any internal error during the execution of the request.
 </details>
-
-#### Filter by Date
-
-The date must follow the **ISO 8601** Standard for Date and Time. Check
-it [here](https://www.iso.org/iso-8601-date-and-time-format.html).
-
-```
-http://localhost:8080/prices?date=2020-06-14T15:30:00
-```
-
-<details>
-  <summary>Response</summary>
-
-```json
-[
-  {
-    "productId": 35455,
-    "brandId": 1,
-    "priceList": 2,
-    "price": 25.45,
-    "currency": "EUR",
-    "startDate": "2020-06-14T15:00:00",
-    "endDate": "2020-06-14T18:30:00"
-  }
-]
-```
-
-</details>
-
-If the given date does not match any result, an empty list will be returned.
-
-#### Filter by Brand Id
-
-The Brand Id should be a Long.
-
-```
-http://localhost:8080/prices?brandId=1
-```
-
-<details>
-  <summary>Response</summary>
-
-```json
-[
-  {
-    "productId": 35455,
-    "brandId": 1,
-    "priceList": 1,
-    "price": 35.5,
-    "currency": "EUR",
-    "startDate": "2020-06-14T00:00:00",
-    "endDate": "2020-12-31T23:59:59"
-  },
-  {
-    "productId": 35455,
-    "brandId": 1,
-    "priceList": 2,
-    "price": 25.45,
-    "currency": "EUR",
-    "startDate": "2020-06-14T15:00:00",
-    "endDate": "2020-06-14T18:30:00"
-  },
-  {
-    "productId": 35455,
-    "brandId": 1,
-    "priceList": 3,
-    "price": 30.5,
-    "currency": "EUR",
-    "startDate": "2020-06-15T00:00:00",
-    "endDate": "2020-06-15T11:00:00"
-  },
-  {
-    "productId": 35455,
-    "brandId": 1,
-    "priceList": 4,
-    "price": 38.95,
-    "currency": "EUR",
-    "startDate": "2020-06-15T16:00:00",
-    "endDate": "2020-12-31T23:59:59"
-  }
-]
-```
-
-</details>
-
-If the given Brand Id does not match any result, an empty list will be returned.
-
-#### Filter by Product Id
-
-```
-http://localhost:8080/prices?productId=35455
-```
-
-<details>
-  <summary>Response</summary>
-
-```json
-[
-  {
-    "productId": 35455,
-    "brandId": 1,
-    "priceList": 1,
-    "price": 35.5,
-    "currency": "EUR",
-    "startDate": "2020-06-14T00:00:00",
-    "endDate": "2020-12-31T23:59:59"
-  },
-  {
-    "productId": 35455,
-    "brandId": 1,
-    "priceList": 2,
-    "price": 25.45,
-    "currency": "EUR",
-    "startDate": "2020-06-14T15:00:00",
-    "endDate": "2020-06-14T18:30:00"
-  },
-  {
-    "productId": 35455,
-    "brandId": 1,
-    "priceList": 3,
-    "price": 30.5,
-    "currency": "EUR",
-    "startDate": "2020-06-15T00:00:00",
-    "endDate": "2020-06-15T11:00:00"
-  },
-  {
-    "productId": 35455,
-    "brandId": 1,
-    "priceList": 4,
-    "price": 38.95,
-    "currency": "EUR",
-    "startDate": "2020-06-15T16:00:00",
-    "endDate": "2020-12-31T23:59:59"
-  }
-]
-```
-
-</details>
-
-If the given Product Id does not match any result, and empty list will be returned.
-
-#### Filter by All Params
-
-You can use all the params at the same time. Remember that when filtering by date, if two or more results match, the one
-with higher priority will be returned.
-
-```
-http://localhost:8080/prices?date=2020-06-15T07:30:00&brandId=1&productId=35455
-```
-
-<details>
-  <summary>Response</summary>
-
-```json
-[
-  {
-    "productId": 35455,
-    "brandId": 1,
-    "priceList": 3,
-    "price": 30.5,
-    "currency": "EUR",
-    "startDate": "2020-06-15T00:00:00",
-    "endDate": "2020-06-15T11:00:00"
-  }
-]
-```
-
-</details>
-
-If any of the parameter do not match any result, an empty list will be returned.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -541,7 +462,7 @@ http://localhost:8080/swagger-ui/index.html
 By querying the api directly, as in this example:
 
 ```
-http://localhost:8080/prices
+http://price-explorer.sauleiros.com/prices?date=2020-06-16T21:00:00&brandId=1&productId=35455
 ```
 
 Aditionaly, a Github Actions Workflow was created for build and publish the image every time a new change is pushed into main ([see workflow](https://github.com/SaulEiros/album-explorer/blob/main/.github/workflows/docker-publish.yml)).
@@ -578,7 +499,7 @@ http://price-explorer.sauleiros.com/swagger-ui/index.html
 Or make requests directly to the api as in this example:
 
 ```
-http://price-explorer.sauleiros.com/prices
+http://price-explorer.sauleiros.com/prices?date=2020-06-16T21:00:00&brandId=1&productId=35455
 ```
 
 **Note that HTTPS requests are not available. Enabling SSL connections in Swagger is a work in progress.**
