@@ -180,35 +180,31 @@ pattern ([see more](https://en.wikipedia.org/wiki/Given-When-Then)).
 Here is an example of such tests:
 
 ```java
-
 @Test
-void givenNoFilters_whenGetAllPrices_thenReturnAllPrices() {
-    // GIVEN
-    PriceFilter filter = new PriceFilter(
-            Optional.empty(),
-            Optional.empty(),
-            Optional.empty()
-    );
+    void givenOneExistingPrice_whenSearchingForMatchingProperties_thenPriceIsReturned() {
+        // GIVEN
+        Random random = new Random();
+        LocalDateTime startDate = LocalDateTime.of(2024, 1, 1, 0, 0);
+        LocalDateTime endDate = LocalDateTime.of(2024, 12, 31, 23, 59);
+        Long brandId = random.nextLong();
+        Long productId = random.nextLong();
+        Long priority = random.nextLong();
+        Double price = random.nextDouble();
 
-    when(priceRepository.findPrices(any())).thenReturn(prices);
+        LocalDateTime searchedDate = LocalDateTime.of(2024, 7, 2, 12, 0);
 
-    // WHEN
-    List<Price> result = priceService.findPrices(filter);
+        Price expectedPrice = generatePrice(startDate, endDate, brandId, productId, priority, price);
 
-    // THEN
-    ArgumentCaptor<PriceQuery> captor = ArgumentCaptor.forClass(PriceQuery.class);
-    verify(priceRepository, Mockito.times(1)).findPrices(any());
-    verify(priceRepository).findPrices(captor.capture());
+        when(priceRepository.findPrices(searchedDate, brandId, productId)).thenReturn(List.of(expectedPrice));
 
-    PriceQuery capturedQuery = captor.getValue();
+        // WHEN
+        Price result = priceService.findPrice(searchedDate, brandId, productId);
 
-    assertEquals(Optional.empty(), capturedQuery.date());
-    assertEquals(Optional.empty(), capturedQuery.productId());
-    assertEquals(Optional.empty(), capturedQuery.brandId());
-
-    assertNotNull(result);
-    assertEquals(prices, result);
-}
+        // THEN
+        verify(priceRepository, times(1)).findPrices(searchedDate, brandId, productId);
+        assertNotNull(result);
+        assertEquals(expectedPrice, result);
+    }
 ```
 
 #### E2E Testing
