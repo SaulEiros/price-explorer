@@ -28,7 +28,7 @@ public class PriceController {
         this.priceService = priceService;
     }
 
-    @Operation(summary = "Get a Prices. This price must match the provided date, brandId and productId" +
+    @Operation(summary = "Get a Prices. This price must match the provided date, brandId and productId. " +
             "In case that more than one Price matches the parameters, the one with higher priority will be returned.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "The matching Price.",
@@ -42,11 +42,11 @@ public class PriceController {
     )
     @GetMapping
     public RestPrice findPrices(
-            @Parameter(description = "The date on which the price is elegible.")
+            @Parameter(description = "The date on which the price is eligible.")
             @RequestParam("date") LocalDateTime date,
-            @Parameter(description = "The Brand Id of the desired Prices.")
+            @Parameter(description = "The Brand Id of the desired Price.")
             @RequestParam("brandId") Long brandId,
-            @Parameter(description = "The Product Id of the desired Prices.")
+            @Parameter(description = "The Product Id of the desired Price.")
             @RequestParam("productId") Long productId
     ) {
         return RestPrice.fromDomain(this.priceService.findPrice(date, brandId, productId));
