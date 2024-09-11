@@ -145,4 +145,25 @@ public class PriceE2ETests {
         assertEquals(expectedStartDate, price.startDate());
         assertEquals(expectedEndDate, price.endDate());
     }
+
+    @Test
+    public void code404_test() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get("/prices?date=2020-06-16T21:00:00&brandId=2&productId=35455")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    public void code400_missingParameter_test() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get("/prices?date=2020-06-16T21:00:00&brandId=1")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void code400_invalidParameter_test() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get("/prices?date=2020-06-16T21:00:00&brandId=1&productId=1Z")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
+    }
 }
